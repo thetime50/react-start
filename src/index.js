@@ -3,10 +3,30 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Square extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            value: null,
+        }
+    }
+
     render() {
         return (
-            <button className="square">
-                {/* TODO */}
+            <button className="square"
+                onClick={
+                    // function() {
+                    //     console.log('click', this)
+                    //     this.state.value = 'x'
+                    // }
+                    () => {
+                        console.log('click', this)
+                        this.setState({ value: 'X' }) //每次在组件中调用 setState 时，React 都会自动更新其子组件。
+                    }
+                }>
+                {
+                    /* this.props.value */
+                    this.state.value
+                }
             </button>
         );
     }
@@ -14,7 +34,7 @@ class Square extends React.Component {
 
 class Board extends React.Component {
     renderSquare(i) {
-        return <Square />;
+        return <Square value={i} />;
     }
 
     render() {
