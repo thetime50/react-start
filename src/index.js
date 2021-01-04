@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Square extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            value: null,
-        }
-    }
+    // constructor(props) {
+    //     super(props)
+    //     // this.state = {
+    //     //     value: null,
+    //     // }
+    // }
 
     render() {
         return (
@@ -16,16 +16,16 @@ class Square extends React.Component {
                 onClick={
                     // function() {
                     //     console.log('click', this)
-                    //     this.state.value = 'x'
                     // }
                     () => {
                         console.log('click', this)
-                        this.setState({ value: 'X' }) //每次在组件中调用 setState 时，React 都会自动更新其子组件。
+                        // this.setState({ value: 'X' }) //每次在组件中调用 setState 时，React 都会自动更新其子组件。
+                        this.props.onClick()
                     }
                 }>
                 {
-                    /* this.props.value */
-                    this.state.value
+                    this.props.value
+                    // this.state.value
                 }
             </button>
         );
@@ -33,8 +33,27 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            squares: Array(9).fill(null)
+        }
+    }
+
+    handelClick(i) {
+        const squares = this.state.squares.slice() //whay
+        // 不需要监控内部的节点
+        squares[i] = 'x'
+        this.setState({ squares: squares }) // 触发受控组件重新渲染
+    }
+
     renderSquare(i) {
-        return <Square value={i} />;
+        return (
+            <Square
+                value={this.state.squares[i]}
+                onClick={() => this.handelClick(i)}
+            />
+        );
     }
 
     render() {
