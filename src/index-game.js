@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+// 没有加历史步骤的版本
+
 class Square extends React.Component {
     // constructor(props) {
     //     super(props)
@@ -33,20 +35,48 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            squares: Array(9).fill(null),
+            xIsNext: true,
+        }
+    }
+
+    handelClick(i) {
+        const squares = this.state.squares.slice() //whay
+        // 不需要监控内部的节点
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
+        squares[i] = this.state.xIsNext ? 'X' : 'O'
+        this.setState({
+            squares: squares,
+            xIsNext: !this.state.xIsNext
+        }) // 触发受控组件重新渲染
+    }
+
     renderSquare(i) {
         return (
             <Square
-                // value={this.state.squares[i]}
-                value={this.props.squares[i]}
-                // onClick={() => this.handelClick(i)}
-                onClick={() => this.props.onClick(i)}
+                value={this.state.squares[i]}
+                onClick={() => this.handelClick(i)}
             />
         );
     }
 
     render() {
+        const winner = calculateWinner(this.state.squares);
+        let status;
+        if (winner) {
+            status = 'Winner: ' + winner;
+        } else {
+            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        }
+
         return (
             <div>
+                <div className="status">{status}</div>
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -88,52 +118,14 @@ function calculateWinner(squares) {
 }
 
 class Game extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            history: [{
-                squares: Array(9).fill(null),
-            }],
-            xIsNext: true,
-        }
-    }
-
-    handelClick(i) {
-        const history = this.state.history;
-        const current = history[history.length - 1];
-        const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-            return;
-        }
-        squares[i] = this.state.xIsNext ? 'X' : 'O'
-        this.setState({
-            history: history.concat([{
-                squares: squares,
-            }]),
-            xIsNext: !this.state.xIsNext,
-        }) // 触发受控组件重新渲染
-    }
-
     render() {
-        const history = this.state.history;
-        const current = history[history.length - 1];
-        const winner = calculateWinner(current.squares);
-        let status;
-        if (winner) {
-            status = 'Winner: ' + winner;
-        } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-        }
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board
-                        squares={current.squares}
-                        onClick={(i) => this.handelClick(i)}
-                    />
+                    <Board />
                 </div>
                 <div className="game-info">
-                    <div>{status}</div>
+                    <div>{/* status */}</div>
                     <ol>{/* TODO */}</ol>
                 </div>
             </div>
