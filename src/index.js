@@ -38,36 +38,33 @@ class Square extends React.Component {
 
 class Board extends React.Component {
     renderSquare(i) {
-        let current = this.props.current
         return (
             <Square
                 // value={this.state.squares[i]}
                 value={this.props.squares[i]}
                 // onClick={() => this.handelClick(i)}
                 onClick={() => this.props.onClick(i)}
-                current={i == current}
+                key={i}
             />
         );
     }
 
     render() {
+        let arr3 = Array(3).fill(3)
+        let rows = arr3.map((r, ri, ra) => {
+            let cols = arr3.map((c, ci, ca) => {
+                return this.renderSquare(3 * ri + ci)
+            })
+            return (
+                <div className="board-row" key={ri}>
+                    {cols}
+                </div>
+            )
+        })
+        console.log(rows)
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {rows}
             </div>
         );
     }
