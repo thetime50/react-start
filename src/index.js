@@ -22,7 +22,7 @@ class Square extends React.Component {
                     //     console.log('click', this)
                     // }
                     () => {
-                        console.log('click', this)
+                        // console.log('click', this)
                         // this.setState({ value: 'X' }) //每次在组件中调用 setState 时，React 都会自动更新其子组件。
                         this.props.onClick()
                     }
@@ -37,13 +37,14 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
-    renderSquare(i) {
+    renderSquare(i, current) {
         return (
             <Square
                 // value={this.state.squares[i]}
                 value={this.props.squares[i]}
                 // onClick={() => this.handelClick(i)}
                 onClick={() => this.props.onClick(i)}
+                current={current}
                 key={i}
             />
         );
@@ -53,7 +54,8 @@ class Board extends React.Component {
         let arr3 = Array(3).fill(3)
         let rows = arr3.map((r, ri, ra) => {
             let cols = arr3.map((c, ci, ca) => {
-                return this.renderSquare(3 * ri + ci)
+                let index = 3 * ri + ci
+                return this.renderSquare(index, index === this.props.current)
             })
             return (
                 <div className="board-row" key={ri}>
@@ -61,7 +63,6 @@ class Board extends React.Component {
                 </div>
             )
         })
-        console.log(rows)
         return (
             <div>
                 {rows}
@@ -166,7 +167,7 @@ class Game extends React.Component {
                     <Board
                         squares={current.squares}
                         onClick={(i) => this.handelClick(i)}
-                        current={current.x * current.y}
+                        current={current.x + 3 * current.y}
                     />
                 </div>
                 <div className="game-info">
@@ -189,3 +190,10 @@ ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
+
+// [x] 在游戏历史记录列表显示每一步棋的坐标，格式为(列号, 行号) 。
+// [x] 在历史记录列表中加粗显示当前选择的项目。
+// [x] 使用两个循环来渲染出棋盘的格子，而不是在代码里写死（hardcode）。
+// 添加一个可以升序或降序显示历史记录的按钮。
+// 每当有人获胜时，高亮显示连成一线的 3 颗棋子。
+// 当无人获胜时，显示一个平局的消息。

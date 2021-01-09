@@ -18,6 +18,7 @@ ol, ul {
 }
 
 .square {
+  color: #444;
   background: #fff;
   border: 1px solid #999;
   float: left;
@@ -50,5 +51,6 @@ ol, ul {
 }
 
 .current{
-    font-weight: 900;
+  color: #000;
+  font-weight: 900;
 }
