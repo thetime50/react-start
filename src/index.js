@@ -11,9 +11,13 @@ class Square extends React.Component {
     // }
 
     render() {
+        let { isWinner, current } = this.props
         let className = ["square"]
-        if (this.props.current) {
+        if (current) {
             className.push('current')
+        }
+        if (isWinner) {
+            className.push("blue")
         }
         return (
             <button className={className.join(' ')}
@@ -37,7 +41,7 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
-    renderSquare(i, current) {
+    renderSquare(i, current, isWinner) {
         return (
             <Square
                 // value={this.state.squares[i]}
@@ -45,17 +49,20 @@ class Board extends React.Component {
                 // onClick={() => this.handelClick(i)}
                 onClick={() => this.props.onClick(i)}
                 current={current}
+                isWinner={isWinner}
                 key={i}
             />
         );
     }
 
     render() {
+        let winner = this.props.winner
         let arr3 = Array(3).fill(3)
         let rows = arr3.map((r, ri, ra) => {
             let cols = arr3.map((c, ci, ca) => {
                 let index = 3 * ri + ci
-                return this.renderSquare(index, index === this.props.current)
+                let isWinner = winner && winner.indexOf(index) >= 0
+                return this.renderSquare(index, index === this.props.current, isWinner)
             })
             return (
                 <div className="board-row" key={ri}>
@@ -85,7 +92,10 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return {
+                pieces: squares[a],
+                match: lines[i],
+            };
         }
     }
     return null;
@@ -103,6 +113,7 @@ class Game extends React.Component {
             }],
             xIsNext: true,
             stepNumber: 0,
+            sortUp: false,
         }
     }
 
@@ -137,9 +148,9 @@ class Game extends React.Component {
     }
 
     render() {
-        const history = this.state.history;
+        const { history, sortUp } = this.state;
         const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
+        const { pieces: winner, match: winMatch } = calculateWinner(current.squares) || {};
         let isHistory = this.state.stepNumber < this.state.history.length - 1
 
         const moves = history.map((step, move) => {
@@ -150,10 +161,14 @@ class Game extends React.Component {
             // key只需要保证同级元素里是唯一的
             return (
                 <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                    {move}、 <button onClick={() => this.jumpTo(move)}>{desc}</button>
                 </li>
             );
         });
+
+        if (!sortUp) {
+            moves.reverse()
+        }
 
         let status;
         if (winner) {
@@ -168,18 +183,25 @@ class Game extends React.Component {
                         squares={current.squares}
                         onClick={(i) => this.handelClick(i)}
                         current={current.x + 3 * current.y}
+                        winner={winMatch}
                     />
                 </div>
                 <div className="game-info">
+                    <div onClick={() => { this.setState({ sortUp: !sortUp }) }}>
+                        排序
+                        <span className={sortUp ? 'blue' : ''}>↑</span><span className={!sortUp ? 'blue' : ''}>↓</span>
+                    </div>
                     <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <ul>
+                        {moves}
+                    </ul>
                     {
                         (isHistory) ?
                             (<div>Move later:({`${current.x},${current.y} ${current.pieces}`})</div>) :
                             ('')
                     }
                 </div>
-            </div>
+            </div >
         );
     }
 }
