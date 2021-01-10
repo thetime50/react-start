@@ -123,7 +123,7 @@ class Game extends React.Component {
         const squares = current.squares.slice();
         let x = i % 3
         let y = Math.floor(i / 3)
-        if (calculateWinner(squares) || squares[i]) {
+        if (calculateWinner(squares) || squares[i] || history.length >= 10) {
             return;
         }
         let pieces = this.state.xIsNext ? 'X' : 'O'
@@ -152,6 +152,7 @@ class Game extends React.Component {
         const current = history[this.state.stepNumber];
         const { pieces: winner, match: winMatch } = calculateWinner(current.squares) || {};
         let isHistory = this.state.stepNumber < this.state.history.length - 1
+        let draw = this.state.history.length >= 10 && !winner
 
         const moves = history.map((step, move) => {
             const desc = move ?
@@ -173,6 +174,8 @@ class Game extends React.Component {
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
+        } else if (draw) {
+            status = 'draw';
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
